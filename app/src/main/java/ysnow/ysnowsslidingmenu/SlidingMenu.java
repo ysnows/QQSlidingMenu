@@ -6,6 +6,7 @@ import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.MotionEvent;
+import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.HorizontalScrollView;
@@ -129,9 +130,24 @@ return true;
     @Override
     protected void onScrollChanged(int l, int t, int oldl, int oldt) {
         super.onScrollChanged(l, t, oldl, oldt);
-        float scale=l*1.0f/mMenuWidth;
-        ViewHelper.setTranslationX(wrapperMenu,mMenuWidth*scale);
+        float scale=l*1.0f/mMenuWidth;//取值范围1-0
+        //菜单的动画
+        ViewHelper.setTranslationX(wrapperMenu,mMenuWidth*scale*0.5f);
+        //菜单的缩放-->0.7-1
+         float scaleMenu=1- 0.3f*scale;
+        ViewHelper.setScaleX(wrapperMenu,scaleMenu);
+        ViewHelper.setScaleY(wrapperMenu,scaleMenu);
+        //菜单的透明度-0.4-1
+        float alphaMenu=1- 0.6f*scale;
+        ViewHelper.setAlpha(wrapperMenu,alphaMenu);
 
+        //内容的动画-->缩放--->1-0.8
+       float scaleContent=0.8f+0.2f*scale;
+        //设置缩放的中心点
+        ViewHelper.setPivotX(wrapperContent,0);
+        ViewHelper.setPivotY(wrapperContent,wrapperContent.getHeight()/2);
+        ViewHelper.setScaleX(wrapperContent,scaleContent);
+        ViewHelper.setScaleY(wrapperContent, scaleContent);
 
     }
 }
