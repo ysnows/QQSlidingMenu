@@ -1,12 +1,14 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    xmlns:ysnows="http://schemas.android.com/apk/res/ysnow.ysnowsslidingmenu"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
-
-
      tools:context=".MainActivity">
 
     <ysnow.ysnowsslidingmenu.SlidingMenu
+        android:id="@+id/expanded_menu"
         android:scrollbars="none"
+        ysnows:menuSpadding="220dp"
         android:background="@mipmap/img_frame_background"
         android:layout_width="match_parent"
         android:layout_height="match_parent">

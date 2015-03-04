@@ -1,6 +1,7 @@
 package ysnow.ysnowsslidingmenu;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
@@ -9,6 +10,8 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
+
+import com.nineoldandroids.view.ViewHelper;
 
 /**
  * Created by ysnow on 2015/3/3.
@@ -22,19 +25,35 @@ public class SlidingMenu  extends HorizontalScrollView{
     private ViewGroup wrapperMenu;
     private ViewGroup wrapperContent;
     private boolean isSetted=false;
+    private boolean isOpen;
+    private boolean isclosed;
 
     public SlidingMenu(Context context, AttributeSet attrs) {
-        super(context, attrs);
+        this(context, attrs, 0);
+    }
+
+    //使用自定义属性的时候回调用这个
+    public SlidingMenu(Context context, AttributeSet attrs, int defStyleAttr) {
+        super(context, attrs, defStyleAttr);
+        //在自定义组件中使用自定义属性
+        TypedArray array = context.obtainStyledAttributes(attrs, R.styleable.SlidingMenu);//获得属性数组
+       mMenuWidth= (int) array.getDimension(R.styleable.SlidingMenu_menuSpadding, 420);
+
         //获得屏幕的宽度和计算设置的偏移量的像素值,并计算出menu的宽度
         WindowManager windowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
         DisplayMetrics metrics=new DisplayMetrics();
         windowManager.getDefaultDisplay().getMetrics(metrics);
         mScreenWidth=metrics.widthPixels;//得到屏幕的宽度(像素)
-        mMenuWidth= (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,mMenuPadding,context.getResources().getDisplayMetrics());
+//      mMenuWidth= (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,mMenuPadding,context.getResources().getDisplayMetrics());
 
+        array.recycle();
     }
 
-    //在onmessure中设置子menu和content的宽度--->并在onlayout中设置初始的scroll位置-->在onTouchEvent中
+//在代码中new的时候
+    public SlidingMenu(Context context) {
+        this(context, null);
+    }
+//在onmessure中设置子menu和content的宽度--->并在onlayout中设置初始的scroll位置-->在onTouchEvent中
     //设置滑动
 
 
@@ -81,5 +100,38 @@ public class SlidingMenu  extends HorizontalScrollView{
 return true;
         }
         return super.onTouchEvent(ev);
+    }
+
+    public void openMenu() {
+        if (isOpen) return;
+        this.smoothScrollTo(0,0);
+        isOpen=true;
+    }
+
+    public void closeMenu() {
+        if (!isOpen)return;
+        this.smoothScrollTo(mMenuWidth,0);
+        isOpen=false;
+    }
+
+    /**
+     * 打开和关闭菜单
+     */
+    public void toggleMenu() {
+        if (isOpen) {
+            closeMenu();
+        } else {
+            openMenu();
+        }
+    }
+
+
+    @Override
+    protected void onScrollChanged(int l, int t, int oldl, int oldt) {
+        super.onScrollChanged(l, t, oldl, oldt);
+        float scale=l*1.0f/mMenuWidth;
+        ViewHelper.setTranslationX(wrapperMenu,mMenuWidth*scale);
+
+
     }
 }
